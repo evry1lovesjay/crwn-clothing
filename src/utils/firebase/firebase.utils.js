@@ -8,7 +8,7 @@ import { initializeApp } from "firebase/app";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider} from "firebase/auth";
-import {getFirestore, doc, getDoc, setDoc} from "firebase/auth";
+import {getFirestore, doc, getDoc, setDoc} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAeAhM3r_P2iP0RsV6CYCPKTUAo4XfZzok",
@@ -25,6 +25,7 @@ const firebaseApp = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
 const provider= new GoogleAuthProvider();
+
 provider.setCustomParameters({
     prompt: "select_account"
 });
@@ -66,7 +67,4 @@ export const createUserDocumentFromAuth = async (userAuth) => {
     // if user data exists
     // if true, do nothing, just return the userDocRef
     return userDocRef;
-    
-
-    
 }
