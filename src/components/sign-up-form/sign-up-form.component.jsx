@@ -1,5 +1,5 @@
 //use to track the actual input inside of the inputs below
-import {useState, useContext} from "react";
+import {useState} from "react";
 
 import FormInput from "../form-input/form-input.component"
 
@@ -7,7 +7,7 @@ import Button from "../button/button.component"
 
 import { createAuthUserWithEmailAndPassword , createUserDocumentFromAuth} from "../../utils/firebase/firebase.utils";
 
-import { UserContext } from "../../contexts/user.context";
+// import { UserContext } from "../../contexts/user.context";
 
 import "./sign-up-form.styles.scss"
 
@@ -21,8 +21,8 @@ const defaultFormFields= {
 const SignUpForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const {displayName, email, password, confirmPassword} = formFields;
-
-    const { setCurrentUser} = useContext(UserContext);
+    //context code commented out as we now make use of observer pattern to keep track of auth change.
+    // const { setCurrentUser} = useContext(UserContext);
 
     const resetFormFields = () =>{
         setFormFields(defaultFormFields)
@@ -45,7 +45,8 @@ const SignUpForm = () => {
             // adds the user to firebase authentication
             const {user} = await createAuthUserWithEmailAndPassword(email, password);
             //sets user context
-            setCurrentUser(user)
+            //context code commented out as we now make use of observer pattern to keep track of auth change.
+            // setCurrentUser(user)
             
             // adds the user document to firestore database...
             await createUserDocumentFromAuth(user, {displayName})

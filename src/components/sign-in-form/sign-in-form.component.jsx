@@ -1,13 +1,14 @@
 //use to track the actual input inside of the inputd below
-import {useState, useContext} from "react";
+import {useState} from "react";
 
 import FormInput from "../form-input/form-input.component"
 
 import Button from "../button/button.component"
 
-import { UserContext } from "../../contexts/user.context";
+//context code commented out as we now make use of observer pattern to keep track of auth change.
+// import { UserContext } from "../../contexts/user.context";
 
-import { signInWithGooglePopup , createUserDocumentFromAuth, signInAuthUserWithEmailAndPassword} from "../../utils/firebase/firebase.utils";
+import { signInWithGooglePopup , signInAuthUserWithEmailAndPassword} from "../../utils/firebase/firebase.utils";
 
 import "./sign-in-form.styles.scss"
 
@@ -23,7 +24,8 @@ const SignInForm = () => {
 
     //the code below sends the user data into the context... thereby making the user
     // data available in the navigation component
-    const {setCurrentUser} = useContext(UserContext);
+    //context code commented out as we now make use of observer pattern to keep track of auth change.
+    // const {setCurrentUser} = useContext(UserContext);
 
     const resetFormFields = () =>{
         setFormFields(defaultFormFields)
@@ -31,19 +33,22 @@ const SignInForm = () => {
 
     //this fxn allows users sign in with google pop up
     const signInWithGoogle = async () =>{
-        const {user} = await signInWithGooglePopup();
+        await signInWithGooglePopup();
         //sets user in user context...
-        setCurrentUser(user)
-        await createUserDocumentFromAuth(user)
+        //context code commented out as we now make use of observer pattern to keep track of auth change.
+        // setCurrentUser(user)
+        // await createUserDocumentFromAuth(user)
+        //code moved into the user context component.
     }
 
     const handleSubmit= async (e)=>{
         e.preventDefault();
 
         try {
-            const {user} = await signInAuthUserWithEmailAndPassword(email, password)
+            await signInAuthUserWithEmailAndPassword(email, password)
             //here we set the current value, i.e current user
-            setCurrentUser(user)
+            //context code commented out as we now make use of observer pattern to keep track of auth change.
+            //setCurrentUser(user)
             
             resetFormFields();
             

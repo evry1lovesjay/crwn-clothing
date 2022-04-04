@@ -7,7 +7,7 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from "firebase/auth";
+import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged} from "firebase/auth";
 import {getFirestore, doc, getDoc, setDoc} from "firebase/firestore";
 // we dont need to setup a new provider for native providers like email/pwd or phoneno.. we just use
 //the method above called createUserWithEmailAndPassword
@@ -94,3 +94,8 @@ export const signInAuthUserWithEmailAndPassword =  async (email, password)=>{
 }
 
 export const signOutUser= async ()=> await signOut(auth)
+
+//this is the helper function for observable pattern
+//omAuthStateChanged is a new method provided by firebase to listen for changes instead
+//of using react context everywhere in our code... 
+export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback)

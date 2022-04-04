@@ -11,15 +11,16 @@ import "./navigation.styles.scss"
 
 const Navigation = () =>{
   // we leverage the current user value from our context in our navigation component.....
-    const {currentUser, setCurrentUser} = useContext(UserContext);
+    const {currentUser} = useContext(UserContext);
     // console.log(currentUser)
 
+    //context code commented out as we now make use of observer pattern to keep track of auth change.
     //we create a signouthandler so we can sign out a user and also ensure to sign 
     //them out of our context by setting the user in our context to null once the user signs out.
-    const signOutHandler= async ()=>{
-        await signOutUser();
-        setCurrentUser(null);
-    }
+    // const signOutHandler= async ()=>{
+    //     await signOutUser();
+    //     setCurrentUser(null);
+    // }
 
     return(
       <Fragment>
@@ -33,7 +34,7 @@ const Navigation = () =>{
               </Link>
               {
                   currentUser ? (
-                      <span className="nav-link" onClick={signOutHandler}>SIGN OUT</span>
+                      <span className="nav-link" onClick={signOutUser}>SIGN OUT</span>
                   )
                   : 
               (<Link className="nav-link" to="/auth">
