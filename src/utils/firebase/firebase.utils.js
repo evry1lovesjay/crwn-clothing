@@ -7,8 +7,12 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth";
+import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from "firebase/auth";
 import {getFirestore, doc, getDoc, setDoc} from "firebase/firestore";
+// we dont need to setup a new provider for native providers like email/pwd or phoneno.. we just use
+//the method above called createUserWithEmailAndPassword
+//doc is used to get a document instance
+//getdoc n setdoc is used to get the actual data in a document
 
 
 const firebaseConfig = {
@@ -35,24 +39,26 @@ export const auth = getAuth();
 export const signInWithGooglePopup = ( ) => signInWithPopup(auth, googleprovider);
 export const signInWithGoogleRedirect = () => signInWithRedirect(auth , googleprovider);    
 
-//Firestore...
-//creating the db equal to calling getFirestore
+//creating the firestore database...
 export const db = getFirestore();
 
 // to use it.. i.e //adding authenticated users from auth to firestore
-export const createUserDocumentFromAuth = async (userAuth, additionalInformation) => {
+// this userAuth below is gotten from the Googlesignin page
+export const createUserDocumentFromAuth = async (userAuth, additionalInformation = {}) => {
 
     if(!userAuth) return;
 
+    //doc takes 3 things, 1 the database, the collection (e.g users), and lastly the identifier (e.g pry key)
     const userDocRef = doc(db, "users", userAuth.uid);
-
     // console.log(userDocRef);
+
     //snapshot allows us access the data and check if its exists...
+    //getDoc retrieves the document for our userDocRef
     const userSnapshot = await getDoc(userDocRef);
     // console.log(userSnapshot)
-    //to check if this document exists, we use the exista method...
-    // console.log(userSnapshot.exists)
 
+    //to check if this document exists, we use the exists method...
+    // console.log(userSnapshot.exists)
     // if user data does not exist.
     if(!userSnapshot.exists()){
         const {displayName, email} = userAuth;
@@ -71,14 +77,15 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
         }
     }
     // if user data exists
-    // if true, do nothing, just return the userDocRef
+    // if true, i.e else {do nothing, just return the userDocRef}
     return userDocRef;
 }
 
-//create user with email and password
+//create / SignUp user with native email and password without an explicit provider setup
+//native providers do not need to be set up explicitly by the developer...
 export const createAuthUserWithEmailAndPassword =  async (email, password)=>{
     if(!email || !password) return;
-    return await createAuthUserWithEmailAndPassword(auth, email, password)
+    return await createUserWithEmailAndPassword(auth, email, password)
 }
 
 export const signInAuthUserWithEmailAndPassword =  async (email, password)=>{
@@ -86,3 +93,4 @@ export const signInAuthUserWithEmailAndPassword =  async (email, password)=>{
     return await signInWithEmailAndPassword(auth, email, password)
 }
 
+export const signOutUser= async ()=> await signOut(auth)

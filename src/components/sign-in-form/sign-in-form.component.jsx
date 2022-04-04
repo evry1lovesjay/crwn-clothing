@@ -1,13 +1,16 @@
 //use to track the actual input inside of the inputd below
-import {useState} from "react";
+import {useState, useContext} from "react";
 
 import FormInput from "../form-input/form-input.component"
 
 import Button from "../button/button.component"
 
+import { UserContext } from "../../contexts/user.context";
+
 import { signInWithGooglePopup , createUserDocumentFromAuth, signInAuthUserWithEmailAndPassword} from "../../utils/firebase/firebase.utils";
 
 import "./sign-in-form.styles.scss"
+
 
 const defaultFormFields= {
     email: "",
@@ -18,12 +21,19 @@ const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const {email, password} = formFields;
 
+    //the code below sends the user data into the context... thereby making the user
+    // data available in the navigation component
+    const {setCurrentUser} = useContext(UserContext);
+
     const resetFormFields = () =>{
         setFormFields(defaultFormFields)
     }
 
+    //this fxn allows users sign in with google pop up
     const signInWithGoogle = async () =>{
         const {user} = await signInWithGooglePopup();
+        //sets user in user context...
+        setCurrentUser(user)
         await createUserDocumentFromAuth(user)
     }
 
@@ -31,8 +41,10 @@ const SignInForm = () => {
         e.preventDefault();
 
         try {
-            const response = await signInAuthUserWithEmailAndPassword(email, password)
-            console.log(response)
+            const {user} = await signInAuthUserWithEmailAndPassword(email, password)
+            //here we set the current value, i.e current user
+            setCurrentUser(user)
+            
             resetFormFields();
             
         } catch (error) {
@@ -66,6 +78,8 @@ const SignInForm = () => {
             <div className="buttons-container">
                 <Button type="submit">Sign In</Button>
                 <Button type="button" buttonType="google" onClick={signInWithGoogle}>Google sign In</Button>
+                {/* buttons inside forms have a default type = submit, to prevent the google button from firing as a submit button
+                we change the type from type="submit" to type="button". */}
             </div>
             </form>
         </div>

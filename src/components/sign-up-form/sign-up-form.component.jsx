@@ -1,11 +1,13 @@
-//use to track the actual input inside of the inputd below
-import {useState} from "react";
+//use to track the actual input inside of the inputs below
+import {useState, useContext} from "react";
 
 import FormInput from "../form-input/form-input.component"
 
 import Button from "../button/button.component"
 
 import { createAuthUserWithEmailAndPassword , createUserDocumentFromAuth} from "../../utils/firebase/firebase.utils";
+
+import { UserContext } from "../../contexts/user.context";
 
 import "./sign-up-form.styles.scss"
 
@@ -20,8 +22,15 @@ const SignUpForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const {displayName, email, password, confirmPassword} = formFields;
 
+    const { setCurrentUser} = useContext(UserContext);
+
     const resetFormFields = () =>{
         setFormFields(defaultFormFields)
+    }
+
+    const handleChange= (e) => {
+        const {name, value} = e.target;
+        setFormFields({...formFields, [name]: value})
     }
 
     const handleSubmit= async (e)=>{
@@ -33,7 +42,12 @@ const SignUpForm = () => {
         }
 
         try {
+            // adds the user to firebase authentication
             const {user} = await createAuthUserWithEmailAndPassword(email, password);
+            //sets user context
+            setCurrentUser(user)
+            
+            // adds the user document to firestore database...
             await createUserDocumentFromAuth(user, {displayName})
             resetFormFields();
             
@@ -45,11 +59,6 @@ const SignUpForm = () => {
                 console.log("error creating user", error)
             }
         }
-    }
-
-    const handleChange= (e) => {
-        const {name, value} = e.target;
-        setFormFields({...formFields, [name]: value})
     }
 
     return ( 
