@@ -3,7 +3,7 @@ import {useState} from "react";
 
 import FormInput from "../form-input/form-input.component"
 
-import Button from "../button/button.component"
+import Button, {BUTTON_TYPE_CLASSES} from "../button/button.component"
 
 //context code commented out as we now make use of observer pattern to keep track of auth change.
 // import { UserContext } from "../../contexts/user.context";
@@ -82,7 +82,7 @@ const SignInForm = () => {
             
             <div className="buttons-container">
                 <Button type="submit">Sign In</Button>
-                <Button type="button" buttonType="google" onClick={signInWithGoogle}>Google sign In</Button>
+                <Button type="button" buttonType={BUTTON_TYPE_CLASSES.google} onClick={signInWithGoogle}>Google sign In</Button>
                 {/* buttons inside forms have a default type = submit, to prevent the google button from firing as a submit button
                 we change the type from type="submit" to type="button". */}
             </div>

@@ -8,7 +8,7 @@ import { initializeApp } from "firebase/app";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged} from "firebase/auth";
-import {getFirestore, doc, getDoc, setDoc} from "firebase/firestore";
+import {getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs} from "firebase/firestore";
 // we dont need to setup a new provider for native providers like email/pwd or phoneno.. we just use
 //the method above called createUserWithEmailAndPassword
 //doc is used to get a document instance
@@ -41,6 +41,39 @@ export const signInWithGoogleRedirect = () => signInWithRedirect(auth , googlepr
 
 //creating the firestore database...
 export const db = getFirestore();
+
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) =>{
+    const collectionRef = collection(db, collectionKey)
+    //we use a batch to ensure transactions are successfully added... e.g writeBatch method from firestore
+    const batch = writeBatch(db);
+
+    // objectsToAdd.forEach((object)=>{
+    //     const docRef = doc(collectionRef, object.title.toLowerCase())
+    //     batch.set(docRef, object)
+    // })
+
+    objectsToAdd.forEach((object)=>{
+        const docRef = doc(collectionRef, object.title.toLowerCase())
+        batch.set(docRef, object)
+    })
+
+    await batch.commit()
+    console.log("done")
+}
+
+export const getCategoriesAndDocuments = async() =>{
+    const collectionRef = collection(db, "categories")
+    const q = query(collectionRef)
+
+    const querySnapshot = await getDocs(q)
+    const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot)=>{
+        const {title, items} = docSnapshot.data()
+        acc[title.toLowerCase()]=items
+        return acc
+    }, {})
+
+    return categoryMap
+}
 
 // to use it.. i.e //adding authenticated users from auth to firestore
 // this userAuth below is gotten from the Googlesignin page
