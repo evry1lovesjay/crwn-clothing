@@ -20,10 +20,14 @@
       &:last-child {
         width: 8%;
       }
+
+      @media screen and (max-width: 800px) {
+        width: 16%;
+      }
     }
 
     @media screen and (max-width: 800px) {
-      justify-content: space-around;
+      justify-content: space-evenly;
     }
   }
 
